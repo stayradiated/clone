@@ -24,6 +24,8 @@ func main() {
 		rootDir = os.Args[2]
 	}
 
+	source = strings.TrimLeft(source, "https://")
+
 	split := strings.Split(source, "/")
 
 	if len(split) < 3 {
