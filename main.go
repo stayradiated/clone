@@ -1,33 +1,48 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
 )
 
+var shallow = flag.Bool("shallow", false, "only fetch a single commit")
+var tag = flag.String("tag", "", "checkout a specific tag")
+
+func git(args ...string) *exec.Cmd {
+	cmd := exec.Command("git", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd
+}
+
 func main() {
+	flag.Parse()
+
+	args := flag.Args()
 
 	var source string
-	if len(os.Args) < 2 {
+	if len(args) < 1 {
 		fmt.Println("Error: Must supply git repo.")
 		os.Exit(1)
 	} else {
-		source = os.Args[1]
+		source = args[0]
 	}
+	fmt.Println("source", source)
 
 	var rootDir string
-	if len(os.Args) < 3 {
+	if len(args) < 2 {
 		rootDir = os.Getenv("HOME")
 	} else {
-		rootDir = os.Args[2]
+		rootDir = args[1]
 	}
+	fmt.Println("rootDir", rootDir)
 
 	source = strings.TrimLeft(source, "https://")
 
 	split := strings.Split(source, "/")
-
 	if len(split) < 3 {
 		fmt.Println("Error: Invalid git repo.")
 		os.Exit(1)
@@ -52,8 +67,19 @@ func main() {
 	exec.Command("mkdir", "-p", dir).Run()
 	exec.Command("fasd", "-A", dir).Run()
 
-	cmd := exec.Command("git", "clone", url, dir)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
+	if (*shallow) {
+		git("clone", "--depth", "1", url, dir).Run()
+	} else {
+		git("clone", url, dir).Run()
+	}
+
+	if (len(*tag) > 0) {
+		fetchCmd := git("fetch", "--depth", "1", "origin", "tag", *tag)
+		fetchCmd.Dir = dir
+		fetchCmd.Run()
+
+		resetCmd := git("reset", "--hard", *tag)
+		resetCmd.Dir = dir
+		resetCmd.Run()
+	}
 }
