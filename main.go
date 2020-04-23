@@ -30,7 +30,6 @@ func main() {
 	} else {
 		source = args[0]
 	}
-	fmt.Println("source", source)
 
 	var rootDir string
 	if len(args) < 2 {
@@ -38,7 +37,6 @@ func main() {
 	} else {
 		rootDir = args[1]
 	}
-	fmt.Println("rootDir", rootDir)
 
 	source = strings.TrimLeft(source, "https://")
 
