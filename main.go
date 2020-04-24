@@ -9,6 +9,7 @@ import (
 )
 
 var shallow = flag.Bool("shallow", false, "only fetch a single commit")
+var https = flag.Bool("https", false, "use https instead of ssh")
 var tag = flag.String("tag", "", "checkout a specific tag")
 
 func git(args ...string) *exec.Cmd {
@@ -51,19 +52,19 @@ func main() {
 	repo := split[2]
 	var url string
 
-	switch host {
-	case "github.com":
-		url = "git@github.com:" + user + "/" + repo
-	case "bitbucket.org":
-		url = "git@bitbucket.org:" + user + "/" + repo
-	default:
-		url = "https://" + host + "/" + user + "/" + repo
+	url = "https://" + host + "/" + user + "/" + repo
+	if (*https == false) {
+		switch host {
+		case "github.com":
+			url = "git@github.com:" + user + "/" + repo
+		case "bitbucket.org":
+			url = "git@bitbucket.org:" + user + "/" + repo
+		}
 	}
 
 	dir := fmt.Sprintf("%s/src/%s/%s/%s", rootDir, host, user, repo)
 
 	exec.Command("mkdir", "-p", dir).Run()
-	exec.Command("fasd", "-A", dir).Run()
 
 	if (*shallow) {
 		git("clone", "--depth", "1", url, dir).Run()
