@@ -2,7 +2,7 @@
 
 **clone a specific repo**
 
-Will clone to `~/src/github.com/stayradiated/clone
+Will clone to `~/src/github.com/stayradiated/clone`
 
 ```shell
 clone github.com/stayradiated/clone
@@ -14,6 +14,7 @@ Just get the latest commit.
 
 ```shell
 clone --shallow github.com/stayradiated/clone
+```
 
 **shallow ref clone**
 
