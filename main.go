@@ -10,7 +10,7 @@ import (
 
 var shallow = flag.Bool("shallow", false, "only fetch a single commit")
 var https = flag.Bool("https", false, "use https instead of ssh")
-var tag = flag.String("tag", "", "checkout a specific tag")
+var ref = flag.String("ref", "", "checkout a specific ref")
 
 func git(args ...string) *exec.Cmd {
 	cmd := exec.Command("git", args...)
@@ -72,12 +72,12 @@ func main() {
 		git("clone", url, dir).Run()
 	}
 
-	if (len(*tag) > 0) {
-		fetchCmd := git("fetch", "--depth", "1", "origin", "tag", *tag)
+	if (len(*ref) > 0) {
+		fetchCmd := git("fetch", "--depth", "1", "origin", *ref)
 		fetchCmd.Dir = dir
 		fetchCmd.Run()
 
-		resetCmd := git("reset", "--hard", *tag)
+		resetCmd := git("reset", "--hard", *ref)
 		resetCmd.Dir = dir
 		resetCmd.Run()
 	}
