@@ -16,12 +16,16 @@ Just get the latest commit.
 clone --shallow github.com/stayradiated/clone
 ```
 
-**shallow ref clone**
-
-Just get a specific commit or tag
+**checkout specific commit**
 
 ```shell
-clone --shallow --ref='441c8c55' github.com/stayradiated/clone
+clone --ref='441c8c55' github.com/stayradiated/clone
+```
+
+**checkout specific tag**
+
+```shell
+clone --tag='v1.4.0' github.com/stayradiated/clone
 ```
 
 **use https (instead of ssh)**
